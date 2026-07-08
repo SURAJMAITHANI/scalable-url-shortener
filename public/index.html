@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>URL Shortener Pro</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <header>
+    <h1>🔗 Scalable URL Shortener</h1>
+    <p class="subtitle">Create, manage and track your short links.</p>
+  </header>
+
+  <main>
+
+    <!-- Authentication -->
+    <section class="card" id="auth-section">
+      <h2>Account</h2>
+
+      <div id="auth-error" class="alert hidden"></div>
+      <p id="auth-setup-hint" class="hint hidden"></p>
+
+      <div id="auth-status" class="status-bar logged-out">
+        Not logged in — use Google login or paste a token
+      </div>
+
+      <div class="btn-row">
+        <a href="/auth/google" class="btn btn-primary hidden" id="google-login-btn">
+          Continue with Google
+        </a>
+        <button class="btn" id="me-btn" disabled>My Profile</button>
+        <button class="btn" id="logout-btn" disabled>Logout</button>
+        <button class="btn btn-danger" id="delete-account-btn" disabled>Delete Account</button>
+      </div>
+
+      <!-- Dev login / manual token entry disabled — Google login only -->
+      <div class="dev-only">
+        <button class="btn" id="dev-login-btn">Dev Login</button>
+        <div class="form-row">
+          <input type="text" id="token-input" placeholder="Paste an auth token" />
+          <button class="btn" id="save-token-btn">Save Token</button>
+        </div>
+      </div>
+
+      <pre id="auth-response" class="response-box hidden"></pre>
+    </section>
+
+    <!-- Create Link -->
+    <section class="card" id="shorten-section">
+      <h2>Create Short Link</h2>
+
+      <form id="shorten-form">
+        <label>
+          Long URL <span class="required">*</span>
+          <input type="url" id="long-url" placeholder="Paste your long URL here..." required />
+        </label>
+
+        <label>
+          Custom Alias (Optional)
+          <input type="text" id="custom-alias" placeholder="my-awesome-link" />
+        </label>
+
+        <label>
+          Topic <span class="required">*</span>
+          <input type="text" id="topic" placeholder="Study, Work, Personal..." required />
+        </label>
+
+        <div class="date-row">
+          <label>
+            Start Date
+            <input type="datetime-local" id="start-date" />
+          </label>
+          <label>
+            End Date
+            <input type="datetime-local" id="end-date" />
+          </label>
+        </div>
+
+        <button type="submit" class="btn btn-primary" id="shorten-btn" disabled>
+          Create Short Link
+        </button>
+      </form>
+
+      <pre id="shorten-response" class="response-box hidden"></pre>
+    </section>
+
+    <!-- My Links -->
+    <section class="card" id="links-section">
+      <div class="section-head">
+        <h2>My Links</h2>
+        <button class="btn" id="clear-links-btn">Clear</button>
+      </div>
+
+      <ul id="links-list" class="links-list">
+        <li class="hint">No links yet. Shorten a URL above.</li>
+      </ul>
+    </section>
+
+    <!-- Analytics -->
+    <section class="card" id="analytics-section">
+      <h2>Link Analytics</h2>
+
+      <div class="analytics-tabs">
+        <button class="tab-btn active" data-tab="alias">Alias</button>
+        <button class="tab-btn" data-tab="topic">Topic</button>
+        <button class="tab-btn" data-tab="overall">Overall</button>
+      </div>
+
+      <div id="tab-alias" class="tab-panel">
+        <div class="form-row">
+          <input type="text" id="analytics-alias" placeholder="Enter alias" />
+          <button class="btn" id="analytics-alias-btn" disabled>View</button>
+        </div>
+      </div>
+
+      <div id="tab-topic" class="tab-panel hidden">
+        <div class="form-row">
+          <input type="text" id="analytics-topic" placeholder="Enter topic" />
+          <button class="btn" id="analytics-topic-btn" disabled>View</button>
+        </div>
+      </div>
+
+      <div id="tab-overall" class="tab-panel hidden">
+        <button class="btn" id="analytics-overall-btn" disabled>View Overall Analytics</button>
+      </div>
+
+      <pre id="analytics-response" class="response-box hidden"></pre>
+    </section>
+
+    <!-- Rate Limit Test -->
+    <section class="card" id="rate-section">
+      <h2>Rate Limit Test</h2>
+      <p class="hint">Hits <code>/api/test</code> to check rate limiting behavior.</p>
+
+      <div class="btn-row">
+        <button class="btn" id="rate-single-btn">Send 1 Request</button>
+        <button class="btn" id="rate-test-btn">Send 7 Requests</button>
+      </div>
+
+      <div id="rate-results" class="rate-results"></div>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>Built with ❤️ using Node.js • Express • MongoDB • Redis</p>
+  </footer>
+
+  <script src="/app.js"></script>
+</body>
+</html>

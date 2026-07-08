@@ -1,0 +1,382 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: #f0f2f5;
+  color: #1a1a2e;
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+header {
+  background: #16213e;
+  color: #fff;
+  padding: 1.5rem 2rem;
+  text-align: center;
+}
+
+header h1 {
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.subtitle {
+  opacity: 0.75;
+  font-size: 0.9rem;
+  margin-top: 0.25rem;
+}
+
+main {
+  max-width: 720px;
+  margin: 1.5rem auto;
+  padding: 0 1rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 1.25rem 1.5rem;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.card h2 {
+  font-size: 1.1rem;
+  margin-bottom: 0.75rem;
+  color: #16213e;
+  border-bottom: 2px solid #e94560;
+  padding-bottom: 0.4rem;
+}
+
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+  border-bottom: 2px solid #e94560;
+  padding-bottom: 0.4rem;
+}
+
+.section-head h2 {
+  margin-bottom: 0;
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.section-head .btn {
+  padding: 0.3rem 0.7rem;
+  font-size: 0.78rem;
+}
+
+.hint {
+  font-size: 0.85rem;
+  color: #666;
+  margin-bottom: 0.75rem;
+}
+
+.alert {
+  padding: 0.6rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  margin-bottom: 0.75rem;
+  background: #fde8e8;
+  color: #9b1c1c;
+  border: 1px solid #f8b4b4;
+}
+
+.alert.info {
+  background: #e8f4fd;
+  color: #1e429f;
+  border-color: #b4d8f8;
+}
+
+.required {
+  color: #e94560;
+}
+
+label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+label input {
+  display: block;
+  width: 100%;
+  margin-top: 0.3rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: 400;
+}
+
+label input:focus {
+  outline: none;
+  border-color: #e94560;
+}
+
+.date-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.form-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.form-row input {
+  flex: 1;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.btn {
+  padding: 0.45rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fff;
+  font-size: 0.85rem;
+  cursor: pointer;
+  text-decoration: none;
+  color: #1a1a2e;
+  display: inline-block;
+  transition: background 0.15s, opacity 0.15s;
+}
+
+.btn:hover:not(:disabled) {
+  background: #f5f5f5;
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: #e94560;
+  color: #fff;
+  border-color: #e94560;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #c73652;
+}
+
+.btn-danger {
+  color: #e94560;
+  border-color: #e94560;
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: #fde8e8;
+}
+
+.status-bar {
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  margin-bottom: 0.75rem;
+}
+
+.status-bar.logged-out {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.status-bar.logged-in {
+  background: #d4edda;
+  color: #155724;
+}
+
+.token-details {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.token-details summary {
+  cursor: pointer;
+  color: #555;
+}
+
+.response-box {
+  background: #1a1a2e;
+  color: #a8dadc;
+  padding: 0.75rem 1rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin-top: 0.75rem;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.response-box.error {
+  color: #ff6b6b;
+}
+
+.response-box.success {
+  color: #51cf66;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* Dev login / manual token entry kept in the DOM for app.js,
+   but never shown — Google login is the only sign-in path. */
+.dev-only {
+  display: none !important;
+}
+
+.links-list {
+  list-style: none;
+}
+
+.links-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid #eee;
+  font-size: 0.85rem;
+  gap: 0.75rem;
+}
+
+.links-list li:last-child {
+  border-bottom: none;
+}
+
+.links-list a {
+  color: #e94560;
+  word-break: break-all;
+  font-weight: 600;
+}
+
+.links-list small {
+  color: #777;
+  display: block;
+  margin-top: 0.15rem;
+  word-break: break-all;
+}
+
+.link-actions {
+  display: flex;
+  gap: 0.35rem;
+  flex-shrink: 0;
+}
+
+.link-actions button {
+  padding: 0.25rem 0.55rem;
+  font-size: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.link-actions button:hover {
+  background: #f5f5f5;
+}
+
+.analytics-tabs {
+  display: flex;
+  gap: 0.25rem;
+  margin-bottom: 0.75rem;
+}
+
+.tab-btn {
+  padding: 0.35rem 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 4px 4px 0 0;
+  background: #f5f5f5;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.tab-btn.active {
+  background: #16213e;
+  color: #fff;
+  border-color: #16213e;
+}
+
+.tab-panel {
+  margin-bottom: 0.5rem;
+}
+
+.rate-results {
+  margin-top: 0.75rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.rate-item {
+  font-size: 0.8rem;
+  padding: 0.35rem 0;
+  border-bottom: 1px solid #eee;
+}
+
+.rate-item:last-child {
+  border-bottom: none;
+}
+
+.rate-item.ok {
+  color: #2b8a3e;
+}
+
+.rate-item.limit {
+  color: #c92a2a;
+  font-weight: 600;
+}
+
+footer {
+  text-align: center;
+  padding: 1rem;
+  font-size: 0.8rem;
+  color: #888;
+}
+
+footer a {
+  color: #e94560;
+}
+
+code {
+  background: #f0f0f0;
+  padding: 0.1rem 0.3rem;
+  border-radius: 3px;
+  font-size: 0.85em;
+}
+
+@media (max-width: 480px) {
+  .date-row {
+    grid-template-columns: 1fr;
+  }
+
+  header {
+    padding: 1.25rem 1rem;
+  }
+}

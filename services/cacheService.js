@@ -2,16 +2,29 @@ const redisClient = require("../config/redis");
 
 // Get data from Redis cache
 exports.getFromCache = async (key) => {
-  const cachedData = await redisClient.get(key);
-  return cachedData ? JSON.parse(cachedData) : null;
+  try {
+    const cachedData = await redisClient.get(key);
+    return cachedData ? JSON.parse(cachedData) : null;
+  } catch (err) {
+    console.error("Redis GET Error:", err.message);
+    return null;
+  }
 };
 
 // Set data in Redis cache
 exports.setInCache = async (key, ttl = 600, data) => {
-  await redisClient.setex(key, ttl, data);
+  try {
+    await redisClient.setex(key, ttl, JSON.stringify(data));
+  } catch (err) {
+    console.error("Redis SET Error:", err.message);
+  }
 };
 
 // Delete data from Redis cache
 exports.deleteFromCache = async (key) => {
-  await redisClient.del(key);
+  try {
+    await redisClient.del(key);
+  } catch (err) {
+    console.error("Redis DELETE Error:", err.message);
+  }
 };

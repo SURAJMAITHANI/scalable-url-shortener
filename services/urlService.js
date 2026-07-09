@@ -68,7 +68,9 @@ exports.redirectUrlService = async (alias, req) => {
   const ipAddress = req.ip || "103.165.115.111";
   const geo = geoip.lookup(ipAddress);
 
-  const url = await Url.findOne({ customAlias: alias });
+  const fullShortUrl = `${process.env.BASE_URL.replace(/\/$/, "")}/${alias}`;
+
+const url = await Url.findOne({ shortUrl: fullShortUrl });
 
   if (!url) {
     throw new Error("URL not found");

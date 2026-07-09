@@ -1,69 +1,72 @@
-//! load environment variables
 require("dotenv").config();
-const passport = require("passport");
-require("./config/passport.js");
-const { default: helmet } = require("helmet");
-const session = require("express-session");
-const useragent = require("express-useragent");
-const authRoutes = require("./routes/authRoutes.js");
-const urlRoutes = require("./routes/urlRoutes.js");
-const analyticsRoutes = require("./routes/analyticsRoutes.js");
 
 const express = require("express");
 const path = require("path");
-const app = express();
 const cors = require("cors");
+const helmet = require("helmet");
+const session = require("express-session");
+const passport = require("passport");
+const useragent = require("express-useragent");
 
-//! Enable trust proxy to properly handle client IPs behind proxies
+require("./config/passport");
+
+const connectDB = require("./config/db");
+const limiter = require("./middlewares/rateLimit");
+
+const authRoutes = require("./routes/authRoutes");
+const urlRoutes = require("./routes/urlRoutes");
+const analyticsRoutes = require("./routes/analyticsRoutes");
+const { redirectUrl } = require("./controllers/urlController");
+
+const app = express();
+
 app.set("trust proxy", true);
 
-//! mongodb connection
-const connectDB = require("./config/db.js");
-const limiter = require("./middlewares/rateLimit.js");
 connectDB();
 
-//! Middlewares
 app.use(cors());
 app.use(helmet());
-// app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-//! Session configuration
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: process.env.NODE_ENV === "production" },
+    cookie: {
+      secure: process.env.NODE_ENV === "production",
+    },
   })
 );
 
-app.use("/api/", limiter);
-app.get("/api/test", (req, res) => {
-  res.json({ message: "Rate limiter test successful" });
-});
-//! user agent expose
 app.use(useragent.express());
 
-//! authentication
 app.use(passport.initialize());
 app.use(passport.session());
 
-//! routes
+app.use("/api", limiter);
+
+app.get("/api/test", (req, res) => {
+  res.json({ message: "Rate limiter test successful" });
+});
+
 app.use("/auth", authRoutes);
 app.use("/api/v1/shorten", urlRoutes);
 app.use("/api/v1/analytics", analyticsRoutes);
 
-//! Frontend static files
+// Redirect route (IMPORTANT)
+app.get("/:alias", redirectUrl);
+
+// Static files
 app.use(express.static(path.join(__dirname, "public")));
 
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-//! start server
 const PORT = process.env.PORT || 5000;
+
 app.listen(PORT, () => {
-  console.log(`Server is running at http://localhost:${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });

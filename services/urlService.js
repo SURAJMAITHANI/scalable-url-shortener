@@ -77,6 +77,11 @@ const url = await Url.findOne({ shortUrl: fullShortUrl });
   }
 
   const now = new Date();
+  console.log("========== TIME DEBUG ==========");
+console.log("Current Time :", now);
+console.log("Start Time   :", url.startDate);
+console.log("End Time     :", url.endDate);
+console.log("================================");
 
   if (url.startDate && now < url.startDate) {
     return {

@@ -24,6 +24,7 @@ app.set("trust proxy", true);
 
 connectDB();
 
+// Middlewares
 app.use(cors());
 app.use(helmet());
 app.use(express.json());
@@ -45,25 +46,28 @@ app.use(useragent.express());
 app.use(passport.initialize());
 app.use(passport.session());
 
+// Rate Limiter
 app.use("/api", limiter);
 
 app.get("/api/test", (req, res) => {
   res.json({ message: "Rate limiter test successful" });
 });
 
+// API Routes
 app.use("/auth", authRoutes);
 app.use("/api/v1/shorten", urlRoutes);
 app.use("/api/v1/analytics", analyticsRoutes);
 
-// Redirect route (IMPORTANT)
-app.get("/:alias", redirectUrl);
-
-// Static files
+// Serve static files FIRST
 app.use(express.static(path.join(__dirname, "public")));
 
+// Home Page
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
+
+// Redirect Route LAST
+app.get("/:alias", redirectUrl);
 
 const PORT = process.env.PORT || 5000;
 

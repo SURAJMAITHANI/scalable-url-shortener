@@ -86,7 +86,12 @@ console.log("================================");
   if (url.startDate && now < url.startDate) {
     return {
       status: "NOT_ACTIVE",
-      message: `This link will become active on ${url.startDate.toLocaleString()}`,
+      message: `This link will become active on ${url.startDate.toLocaleString(
+        "en-IN",
+        {
+          timeZone: "Asia/Kolkata",
+        }
+      )}`
     };
   }
 

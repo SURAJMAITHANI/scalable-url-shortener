@@ -239,19 +239,15 @@ $("#shorten-form").addEventListener("submit", async (e) => {
   if (alias) {
     payload.customAlias = alias;
   }
-
-  // Start Date
-const startDate = $("#start-date").value;
-if (startDate) {
-  payload.startDate = new Date(startDate).toISOString();
-}
-
-// End Date
-const endDate = $("#end-date").value;
-if (endDate) {
-  payload.endDate = new Date(endDate).toISOString();
-}
-
+  const startDate = $("#start-date").value;
+  if (startDate) {
+    payload.startDate = new Date(startDate).toISOString();
+  }
+  
+  const endDate = $("#end-date").value;
+  if (endDate) {
+    payload.endDate = new Date(endDate).toISOString();
+  }
   const { ok, status, body } = await apiFetch("/api/v1/shorten", {
     method: "POST",
     body: JSON.stringify(payload),

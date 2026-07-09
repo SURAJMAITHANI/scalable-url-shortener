@@ -2,7 +2,6 @@ const Url = require("../models/Url");
 const geoip = require("geoip-lite");
 const Analytic = require("../models/Analytic");
 const { generateAlias } = require("../utils/generateAlias");
-const redisClient = require("../config/redis");
 const cacheService = require("../services/cacheService");
 
 // Create a short URL
@@ -18,101 +17,101 @@ exports.createShortUrlService = async (
     throw new Error("Start date must be earlier than end date.");
   }
 
-  let shortUrl = customAlias || generateAlias();
+  let alias = customAlias || generateAlias();
   let attempts = 0;
   const maxAttempts = 3;
 
-  let isAliasFind;
+  while (attempts < maxAttempts) {
+    const existing = await Url.findOne({ customAlias: alias });
 
-  do {
-    isAliasFind = await Url.findOne({ shortUrl });
+    if (!existing) break;
 
-    if (isAliasFind) {
-      if (customAlias) {
-        throw new Error(`Custom alias '${customAlias}' already exists.`);
-      } else {
-        shortUrl = generateAlias();
-      }
-      attempts++;
+    if (customAlias) {
+      throw new Error(`Custom alias '${customAlias}' already exists.`);
     }
-  } while (isAliasFind && attempts < maxAttempts && !customAlias);
 
-  if (attempts >= maxAttempts && !customAlias) {
-    throw new Error(
-      "Failed to generate unique short URL after multiple attempts."
-    );
+    alias = generateAlias();
+    attempts++;
   }
+
+  if (attempts >= maxAttempts) {
+    throw new Error("Failed to generate a unique short URL.");
+  }
+
+  const shortUrl = `${process.env.BASE_URL.replace(/\/$/, "")}/${alias}`;
 
   const newUrl = new Url({
     userId,
     longUrl,
     topic,
-    customAlias,
+    customAlias: alias,
     shortUrl,
     startDate,
     endDate,
-});
+  });
 
   const data = await newUrl.save();
+
   if (data) {
-    await cacheService.setInCache("dataAdded", 600, JSON.stringify(data));
-    return data;
+    await cacheService.setInCache(
+      "dataAdded",
+      600,
+      JSON.stringify(data)
+    );
   }
+
+  return data;
 };
 
-// Redirect to the original URL and log analytics
+// Redirect to original URL
 exports.redirectUrlService = async (alias, req) => {
   const ipAddress = req.ip || "103.165.115.111";
   const geo = geoip.lookup(ipAddress);
 
-  const url = await Url.findOne({ shortUrl: alias });
+  const url = await Url.findOne({ customAlias: alias });
+
   if (!url) {
     throw new Error("URL not found");
   }
+
   const now = new Date();
+
   if (url.startDate && now < url.startDate) {
     return {
       status: "NOT_ACTIVE",
-      message: `This link will become active on ${url.startDate.toLocaleString()}`
+      message: `This link will become active on ${url.startDate.toLocaleString()}`,
     };
   }
+
   if (url.endDate && now > url.endDate) {
     return {
       status: "EXPIRED",
-      message: "This link has expired."
+      message: "This link has expired.",
     };
   }
+
   const analyticsData = {
     urlId: url._id,
     ipAddress,
     userAgent: req.headers["user-agent"],
-    osType: req.useragent.os || "Unknown",
-    deviceType: req.useragent.isMobile ? "mobile" : "desktop",
-    platform: req.useragent.platform || "Unknown",
-    browser: req.useragent.browser || "Unknown",
+    osType: req.useragent?.os || "Unknown",
+    deviceType: req.useragent?.isMobile ? "mobile" : "desktop",
+    platform: req.useragent?.platform || "Unknown",
+    browser: req.useragent?.browser || "Unknown",
     country: geo?.country || null,
     region: geo?.region || null,
     city: geo?.city || null,
   };
 
-  const newAnalytics = new Analytic(analyticsData);
-  await newAnalytics.save();
+  await Analytic.create(analyticsData);
 
   url.clicks += 1;
   await url.save();
 
-  const key = `shortUrl:${req.originalUrl}`;
-  await cacheService.deleteFromCache(key);
-  //   redisClient.del(key);
-
-  const userKey = `overallAnalytics`;
-  await cacheService.deleteFromCache(userKey);
-
-  const urlAnalyticsKey = `urlAnalytics:${alias}`;
-  await cacheService.deleteFromCache(urlAnalyticsKey);
-
-  const topicAnalyticsKey = `topicAnalytics:${url.topic}`;
-  await cacheService.deleteFromCache(topicAnalyticsKey);
+  await cacheService.deleteFromCache(`shortUrl:${alias}`);
+  await cacheService.deleteFromCache("overallAnalytics");
+  await cacheService.deleteFromCache(`urlAnalytics:${alias}`);
+  await cacheService.deleteFromCache(`topicAnalytics:${url.topic}`);
 
   return url.longUrl;
 };
